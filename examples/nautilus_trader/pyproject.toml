@@ -1,0 +1,44 @@
+# examples/nautilus_trader/pyproject.toml
+#
+# Self-contained project metadata for the Nautilus Trader example.
+# Per the polyglot mono-repo rule: each Python example has its own pyproject.toml;
+# hoist a shared one only when >=2 Python examples exist.
+
+[project]
+name = "algovault-nautilus-example"
+version = "0.1.0"
+description = "Verifiable-Signal v1.0 -> Nautilus Trader AlgoVaultSignal(Data) transformer + demo."
+license = "MIT"
+readme = "README.md"
+
+# Nautilus 1.227.0 (latest stable Beta on PyPI as of 2026-05-22) requires
+# Python >=3.12,<3.15. Mirror that constraint here to fail fast at install.
+requires-python = ">=3.12,<3.15"
+
+dependencies = [
+    # Nautilus is in active 1.x rolling-release; no 2.0 announced as of 2026-05.
+    # Pin >=1.227.0 (architect-ratified Plan-Mode Q-C), <2 to gate major bumps.
+    "nautilus_trader>=1.227.0,<2",
+    # Official MCP Python SDK; 55 published releases on PyPI as of 2026-05-22.
+    # Used by run.py only; transform.py is pure (no MCP import).
+    "mcp>=1.27.1,<2",
+]
+
+[project.optional-dependencies]
+# Test-only deps; CI installs via `pip install -e .[dev]`.
+dev = [
+    "pytest>=8",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# Treat the folder as a single-module package (transform.py at the root)
+# rather than auto-discovering. Keeps the install footprint minimal.
+py-modules = ["transform"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --strict-markers"
