@@ -20,6 +20,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["examples/**/*.ts"],
+  "include": ["examples/**/*.ts", "shared/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

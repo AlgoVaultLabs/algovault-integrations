@@ -39,13 +39,12 @@
 import { readFileSync, existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { randomUUID } from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { reshapeToEnvelope } from "../../shared/lib/reshape-to-envelope.js";
 import {
   makeToThreeCommasRequest,
   type ThreeCommasConfig,
-  type VerifiableSignalV1,
 } from "./transform.js";
 
 const ALGOVAULT_MCP_URL = "https://api.algovault.com/mcp";
@@ -109,52 +108,9 @@ function resolveConfig(): ResolvedConfig {
   };
 }
 
-/**
- * Reshape the raw `get_trade_call` MCP response into a Verifiable-Signal v1.0
- * envelope. Same derivation rules as G2-W1's ai4trade run.ts + G2-W2's
- * Nautilus run.py (confidence 0-100 → 0.0-1.0; unix→ISO 8601; UUIDv4 for
- * signal_id).
- *
- * Plan-Mode WIS candidate (G2-W3): hoist this helper to a shared
- * `shared/reshapeMcpResponse.ts` module when ≥3 TS examples need it
- * (this wave IS the 3rd; deferred to a dedicated extraction wave).
- */
-function reshapeToEnvelope(
-  raw: Record<string, unknown>,
-  coin: string,
-  timeframe: string,
-): VerifiableSignalV1 {
-  const call = String(raw.call ?? "").toLowerCase() as VerifiableSignalV1["action"];
-  const confidenceRaw = Number(raw.confidence ?? 0);
-  const confidence = confidenceRaw > 1 ? confidenceRaw / 100 : confidenceRaw;
-  const price = typeof raw.price === "number" ? raw.price : null;
-  const reasoning = typeof raw.reasoning === "string" ? raw.reasoning : null;
-  const unixTs = typeof raw.timestamp === "number" ? raw.timestamp : null;
-  const emittedAt =
-    unixTs != null
-      ? new Date(unixTs * 1000).toISOString().replace(/\.\d{3}Z$/, "Z")
-      : new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-
-  return {
-    version: "1.0",
-    signal_id: randomUUID(),
-    emitted_at: emittedAt,
-    market: "crypto",
-    action: call,
-    symbol: coin,
-    price,
-    quantity: null,
-    timeframe,
-    executed_at: null,
-    content: reasoning,
-    composite_verdict: {
-      verdict: call,
-      confidence,
-    },
-    merkle_proof: null,
-    cross_venue_metadata: null,
-  };
-}
+// `reshapeToEnvelope` is imported from `shared/lib/reshape-to-envelope.js`
+// (hoisted per OPS-SHARED-TS-PRIMITIVES-EXTRACTION-W1; single SoT across all
+// TS examples).
 
 async function main(): Promise<void> {
   const config = resolveConfig();

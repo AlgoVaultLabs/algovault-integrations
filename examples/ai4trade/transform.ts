@@ -22,48 +22,14 @@
  *                       when null/missing (delegates to ai4trade's auto-time
  *                       per their Method 2 platform-simulated-trade convention)
  *
- * The hand-written VerifiableSignalV1 interface mirrors the schema's properties
- * block at https://raw.githubusercontent.com/AlgoVaultLabs/crypto-quant-signal-mcp/main/schemas/verifiable-signal-v1.json
- * Future examples may share a `types/verifiable-signal-v1.ts` when ≥3 examples
- * import it; until then, in-folder duplication keeps this example self-contained.
+ * The `VerifiableSignalV1` interface is hoisted to `shared/types/verifiable-signal-v1.ts`
+ * (single SoT across all TS examples — see OPS-SHARED-TS-PRIMITIVES-EXTRACTION-W1).
+ * Re-exported here so `run.ts` + tests can continue importing it from `../transform.js`
+ * (preserves the existing import path; no churn in downstream files).
  */
 
-// ─── Verifiable-Signal v1.0 (subset — required + fields this transform reads) ───
-
-export interface VerifiableSignalV1 {
-  version: string;
-  signal_id: string;
-  emitted_at: string;
-  market: string;
-  action: "buy" | "sell" | "short" | "cover" | "hold";
-  symbol: string;
-  price?: number | null;
-  quantity?: number | null;
-  timeframe?: string;
-  executed_at?: string | null;
-  content?: string | null;
-  composite_verdict: {
-    verdict: "buy" | "sell" | "short" | "cover" | "hold";
-    confidence: number;
-    factor_weights?: Record<string, number>;
-  };
-  merkle_proof?: {
-    leaf: string;
-    root: string;
-    path: Array<{ sibling: string; position: "left" | "right" }>;
-    hash_algo?: "sha256" | "keccak256" | "blake3";
-    published_at?: string | null;
-    anchor_url?: string | null;
-  } | null;
-  cross_venue_metadata?: {
-    venues_consulted: string[];
-    venue_agreement_score?: number | null;
-    per_venue_verdicts?: Record<string, "buy" | "sell" | "short" | "cover" | "hold">;
-  } | null;
-  // Forward-compat: schema is additionalProperties: true. Unknown keys preserved
-  // by the caller (not by this transform — this transform reads documented fields only).
-  [key: string]: unknown;
-}
+import type { VerifiableSignalV1 } from "../../shared/types/verifiable-signal-v1.js";
+export type { VerifiableSignalV1 };
 
 // ─── ai4trade `POST /api/signals/realtime` request body ───
 

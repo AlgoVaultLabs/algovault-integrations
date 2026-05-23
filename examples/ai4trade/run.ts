@@ -27,13 +27,10 @@
 import { readFileSync, existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { randomUUID } from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import {
-  toAi4tradeRequest,
-  type VerifiableSignalV1,
-} from "./transform.js";
+import { reshapeToEnvelope } from "../../shared/lib/reshape-to-envelope.js";
+import { toAi4tradeRequest } from "./transform.js";
 
 const ALGOVAULT_MCP_URL = "https://api.algovault.com/mcp";
 const AI4TRADE_ENDPOINT = "https://ai4trade.ai/api/signals/realtime";
@@ -60,51 +57,6 @@ function resolveBearer(): string | null {
 function exitWithMessage(msg: string, code: number): never {
   process.stderr.write(`${msg}\n`);
   process.exit(code);
-}
-
-/**
- * Reshape the raw `get_trade_call` response (per crypto-quant-signal-mcp
- * src/index.ts) into a Verifiable-Signal v1.0 envelope per the derivation
- * rules from G1's worked-example fixture.
- *
- * Raw shape keys observed: call, confidence, price, indicators, regime,
- * reasoning, timestamp, coin, timeframe, _algovault.
- */
-function reshapeToEnvelope(
-  raw: Record<string, unknown>,
-  coin: string,
-  timeframe: string,
-): VerifiableSignalV1 {
-  const call = String(raw.call ?? "").toLowerCase() as VerifiableSignalV1["action"];
-  const confidenceRaw = Number(raw.confidence ?? 0);
-  const confidence = confidenceRaw > 1 ? confidenceRaw / 100 : confidenceRaw;
-  const price = typeof raw.price === "number" ? raw.price : null;
-  const reasoning = typeof raw.reasoning === "string" ? raw.reasoning : null;
-  const unixTs = typeof raw.timestamp === "number" ? raw.timestamp : null;
-  const emittedAt =
-    unixTs != null
-      ? new Date(unixTs * 1000).toISOString().replace(/\.\d{3}Z$/, "Z")
-      : new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-
-  return {
-    version: "1.0",
-    signal_id: randomUUID(),
-    emitted_at: emittedAt,
-    market: "crypto",
-    action: call,
-    symbol: coin,
-    price,
-    quantity: null,
-    timeframe,
-    executed_at: null,
-    content: reasoning,
-    composite_verdict: {
-      verdict: call,
-      confidence,
-    },
-    merkle_proof: null,
-    cross_venue_metadata: null,
-  };
 }
 
 async function main(): Promise<void> {

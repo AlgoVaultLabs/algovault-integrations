@@ -36,6 +36,9 @@ algovault-integrations/
 ├── package.json                          # devDeps only
 ├── tsconfig.json                         # strict ES2022 NodeNext
 ├── .github/workflows/ci.yml              # vitest across all examples
+├── shared/                               # TS primitives (interfaces + helpers) shared across examples
+│   ├── types/verifiable-signal-v1.ts     # canonical VerifiableSignalV1 interface
+│   └── lib/reshape-to-envelope.ts        # canonical raw-MCP → v1.0-envelope reshape helper
 └── examples/
     └── <platform>/
         ├── README.md                     # prereq + run command
@@ -44,6 +47,8 @@ algovault-integrations/
         └── tests/
             └── transform.test.ts         # vitest: mapper output structural validation
 ```
+
+`shared/` is internal to this mono-repo (NOT npm-published). Per-platform examples import via relative paths (`../../shared/types/...`, `../../shared/lib/...`) per NodeNext ESM convention.
 
 ## License
 
