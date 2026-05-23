@@ -1,0 +1,27 @@
+{
+  "name": "algovault-integrations",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Production-ready examples for consuming the AlgoVault Verifiable-Signal v1.0 spec across downstream execution platforms.",
+  "license": "MIT",
+  "homepage": "https://github.com/AlgoVaultLabs/algovault-integrations#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlgoVaultLabs/algovault-integrations.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.0"
+  }
+}
