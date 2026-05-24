@@ -10,11 +10,16 @@ Production-ready examples for consuming the [AlgoVault Verifiable-Signal v1.0 sp
 
 ## Examples
 
+Most examples ship as **transform code** (`transform.ts` / `transform.py` + tests + `run.ts` / `run.py`). Some platforms (those that are themselves MCP servers, or otherwise don't accept signal-input outbound) ship as **reference-architecture documentation** instead — a single emitter-neutral `README.md` documenting the cross-MCP orchestration pattern, with no transform code.
+
 | Platform | Folder | Transformer signature | Transport |
 |---|---|---|---|
 | [AI-Trader (ai4trade.ai)](https://ai4trade.ai) | [`examples/ai4trade/`](./examples/ai4trade/) | `toAi4tradeRequest(signal): Ai4tradeRequest \| null` | REST `POST /api/signals/realtime` |
+| [Nautilus Trader](https://nautilustrader.io) | [`examples/nautilus_trader/`](./examples/nautilus_trader/) | `to_nautilus_signal(signal) -> AlgoVaultSignal \| None` | Python in-process `AlgoVaultSignal(Data)` publish |
+| [3Commas](https://3commas.io) | [`examples/3commas/`](./examples/3commas/) | `makeToThreeCommasRequest(config)` → `(signal) => ThreeCommasRequest \| null` | REST POST Signal Bot custom-signal webhook |
+| [QuantDinger](https://github.com/brokermr810/QuantDinger) | [`examples/quantdinger/`](./examples/quantdinger/) | (reference-architecture doc) | IDE-mediated cross-MCP orchestration |
 
-Examples are listed as they ship. Each example follows the same shape: a pure `toXRequest(signal)` transformer, vitest unit tests, an end-to-end `run.ts` demo, and a terse README.
+Examples are listed as they ship. Each transform-code example follows the same shape: a pure `toXRequest(signal)` transformer, unit tests, an end-to-end `run` demo, and a terse README. Reference-architecture-doc examples ship a single `README.md` with no transform code.
 
 ## Quick start
 
