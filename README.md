@@ -19,6 +19,8 @@ Most examples ship as **transform code** (`transform.ts` / `transform.py` + test
 | [3Commas](https://3commas.io) | [`examples/3commas/`](./examples/3commas/) | `makeToThreeCommasRequest(config)` → `(signal) => ThreeCommasRequest \| null` | REST POST Signal Bot custom-signal webhook |
 | [QuantDinger](https://github.com/brokermr810/QuantDinger) | [`examples/quantdinger/`](./examples/quantdinger/) | (reference-architecture doc) | IDE-mediated cross-MCP orchestration |
 | [Cryptohopper](https://www.cryptohopper.com) | [`examples/cryptohopper/`](./examples/cryptohopper/) | `makeToCryptohopperRequest(config)` → `(signal) => CryptohopperRequest \| null` | REST GET external-Signaler endpoint with HMAC-sha512 `X-Hub-Signature` |
+| [Hummingbot](https://hummingbot.org) | [`examples/hummingbot/`](./examples/hummingbot/) | `to_hummingbot_signal(signal) -> HummingbotSignal \| None` | Python in-process TypedDict → `OrderCandidate(**signal)` for `StrategyV2Base` |
+| [FreqTrade](https://www.freqtrade.io) | [`examples/freqtrade/`](./examples/freqtrade/) | `to_freqtrade_signal(signal) -> FreqtradeSignal \| None` | Python in-process TypedDict → `IStrategy.populate_entry_trend()` DataFrame flags |
 
 Examples are listed as they ship. Each transform-code example follows the same shape: a pure `toXRequest(signal)` transformer, unit tests, an end-to-end `run` demo, and a terse README. Reference-architecture-doc examples ship a single `README.md` with no transform code.
 

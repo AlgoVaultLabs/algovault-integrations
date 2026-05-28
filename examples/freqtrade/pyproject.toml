@@ -1,0 +1,38 @@
+# examples/freqtrade/pyproject.toml
+#
+# Self-contained project metadata for the FreqTrade example.
+
+[project]
+name = "algovault-freqtrade-example"
+version = "0.1.0"
+description = "Verifiable-Signal v1.0 -> FreqTrade IStrategy entry/exit flags transformer + demo."
+license = "MIT"
+readme = "README.md"
+
+# FreqTrade 2026.4 (latest stable on PyPI as of 2026-05-29) requires
+# Python >=3.11. Mirror that here.
+requires-python = ">=3.11"
+
+dependencies = [
+    # Official MCP Python SDK; used by run.py only. transform.py is pure
+    # (no MCP, no freqtrade, no I/O).
+    "mcp>=1.27.1,<2",
+]
+# NOTE: freqtrade is NOT a dependency. FreqtradeSignal TypedDict mirrors
+# the canonical 4-flag entry/exit shape (enter_long/enter_short/exit_long/
+# exit_short) plus enter_tag/exit_tag debug labels without importing the
+# freqtrade.strategy.IStrategy class. Keeps transform.py pure and CI fast.
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["transform"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --strict-markers"

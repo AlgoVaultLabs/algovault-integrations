@@ -1,0 +1,40 @@
+# examples/hummingbot/pyproject.toml
+#
+# Self-contained project metadata for the Hummingbot example.
+# Per the polyglot mono-repo rule: each Python example has its own pyproject.toml.
+
+[project]
+name = "algovault-hummingbot-example"
+version = "0.1.0"
+description = "Verifiable-Signal v1.0 -> Hummingbot OrderCandidate-shape transformer + demo."
+license = "MIT"
+readme = "README.md"
+
+# Hummingbot 20260521 (latest stable on PyPI as of 2026-05-29) requires
+# Python >=3.10.12. We mirror that here so consumers fail fast at install
+# even though this example's transform doesn't import hummingbot at runtime.
+requires-python = ">=3.10.12"
+
+dependencies = [
+    # Official MCP Python SDK; used by run.py only. transform.py is pure
+    # (no MCP, no hummingbot, no I/O).
+    "mcp>=1.27.1,<2",
+]
+# NOTE: hummingbot is NOT a dependency. The HummingbotSignal TypedDict
+# mirrors hummingbot.core.data_type.{common,order_candidate} field names
+# without importing them, keeping transform.py pure and CI fast. Real
+# Hummingbot strategies consume the dict via OrderCandidate(**signal).
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["transform"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --strict-markers"
