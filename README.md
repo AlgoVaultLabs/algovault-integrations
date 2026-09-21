@@ -10,7 +10,7 @@ Production-ready examples for consuming the [AlgoVault Verifiable-Signal v1.0 sp
 
 ## Examples
 
-Most examples ship as **transform code** (`transform.ts` / `transform.py` + tests + `run.ts` / `run.py`). Some platforms (those that are themselves MCP servers, or otherwise don't accept signal-input outbound) ship as **reference-architecture documentation** instead — a single emitter-neutral `README.md` documenting the cross-MCP orchestration pattern, with no transform code. A third class — **MCP-connect recipes** ([`examples/mcp-connect/`](./examples/mcp-connect/)) — covers AI-agent frameworks that consume a remote MCP server natively (LangChain, Vercel AI SDK, CrewAI): a short README + runnable snippet that points the framework's MCP client at `api.algovault.com/mcp` in ~5 lines, no transform code. Coinbase AgentKit — which can't consume a remote MCP server natively — gets a dedicated npm action provider, [`examples/agentkit/`](./examples/agentkit/).
+Most examples ship as **transform code** (`transform.ts` / `transform.py` + tests + `run.ts` / `run.py`). Some platforms (those that are themselves MCP servers, or otherwise don't accept signal-input outbound) ship as **reference-architecture documentation** instead — a single emitter-neutral `README.md` documenting the cross-MCP orchestration pattern, with no transform code. A third class — **MCP-connect recipes** ([`examples/mcp-connect/`](./examples/mcp-connect/)) — covers AI-agent frameworks that consume a remote MCP server natively (LangChain, Vercel AI SDK, CrewAI): a short README + runnable snippet that points the framework's MCP client at `api.algovault.com/mcp` in ~5 lines, no transform code. Coinbase AgentKit — which can't consume a remote MCP server natively — gets a dedicated npm action provider, [`examples/agentkit/`](./examples/agentkit/). A fourth class — **decision-layer examples** ([`examples/typesafe-jev/`](./examples/typesafe-jev/)) — sits between the verdict and execution rather than downstream of it: the transformer returns a TypeSafe `SystemOneRequest`, a System One model answers typed questions about acting on the verdict, and code applies every threshold.
 
 | Platform | Folder | Transformer signature | Transport |
 |---|---|---|---|
@@ -25,8 +25,9 @@ Most examples ship as **transform code** (`transform.ts` / `transform.py` + test
 | [LangChain / LangGraph](https://www.langchain.com) | [`examples/mcp-connect/langchain/`](./examples/mcp-connect/langchain/) | (MCP-connect recipe) | `MultiServerMCPClient` → streamable-HTTP MCP |
 | [Vercel AI SDK](https://ai-sdk.dev) | [`examples/mcp-connect/vercel-ai-sdk/`](./examples/mcp-connect/vercel-ai-sdk/) | (MCP-connect recipe) | `createMCPClient` → streamable-HTTP MCP |
 | [CrewAI](https://crewai.com) | [`examples/mcp-connect/crewai/`](./examples/mcp-connect/crewai/) | (MCP-connect recipe) | `MCPServerAdapter` → streamable-HTTP MCP |
+| [TypeSafe Jev](https://docs.typesafe.ai) | [`examples/typesafe-jev/`](./examples/typesafe-jev/) | `toJevRequest(signal, ctx): SystemOneRequest \| null` (decision layer) | `@typesafe-ai/sdk` → `POST /v1/systemone`, direct or via Vercel AI Gateway; dry run with no key |
 
-Examples are listed as they ship. Each transform-code example follows the same shape: a pure `toXRequest(signal)` transformer, unit tests, an end-to-end `run` demo, and a terse README. Reference-architecture-doc examples ship a single `README.md` with no transform code.
+Examples are listed as they ship. Each transform-code example follows the same shape: a pure `toXRequest(signal)` transformer, unit tests, an end-to-end `run` demo, and a terse README. Reference-architecture-doc examples ship a single `README.md` with no transform code. Decision-layer examples keep the same four files; their transformer takes the caller's context too (`toJevRequest(signal, ctx)`), and `transform.ts` also holds a pure `decide()` beside its thresholds.
 
 ## Quick start
 
